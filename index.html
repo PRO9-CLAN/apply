@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>application Form</title>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-image: url('https://cdn.wallpapersafari.com/3/37/8v9Oed.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: black; /* Change text color to black globally */
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.8); /* Light background for readability */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  /* Make the form fit the container */
+  form {
+    width: 100%; /* Ensure the form takes full width */
+    box-sizing: border-box; /* Include padding and borders in width calculation */
+  }
+
+  label {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: block;
+    color: black; /* Ensure label text is black */
+  }
+
+  input, textarea {
+    width: 100%; /* Ensure input fields fit the container */
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: black; /* Change text color inside input to black */
+    background-color: #fff; /* Ensure the background is white for inputs */
+    box-sizing: border-box; /* Include padding and borders in width calculation */
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: black; /* Make placeholder text black */
+  }
+
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Make button take full width */
+    box-sizing: border-box;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+
+  .result {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e7ffe7;
+    border: 1px solid #d4f8d4;
+    border-radius: 4px;
+  }
+
+  .thank-you {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #d3ffd3;
+    border: 1px solid #c1f7c1;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .file-input {
+    margin-bottom: 20px;
+  }
+</style>
+
+</head>
+<body>
+  <div class="container">
+    <h1>application Form</h1>
+    
+    <!-- JSON Import Section -->
+    <label for="jsonFile" class="file-input" id="jsonLabel">Import JSON File:</label>
+    <input type="file" id="jsonFile" accept=".json" onchange="importJsonFile(event)" />
+
+    <!-- Form Section -->
+    <form id="infoForm">
+      <label for="discordName">Your Discord Name:</label>
+      <input type="text" id="discordName" name="discordName" required>
+
+      <label for="userID">Your User ID (e.g., Y2OOB2):</label>
+      <input type="text" id="userID" name="userID" required>
+
+      <label for="age">Your Age (optional):</label>
+      <input type="number" id="age" name="age">
+
+      <label for="applyingFor">Applying For:</label>
+      <input type="text" id="applyingFor" name="applyingFor" required>
+
+      <label for="whyNeeded">Why do you think we need you? (optional):</label>
+      <textarea id="whyNeeded" name="whyNeeded" rows="4" placeholder="Tell us why you think you're a good fit for the role..."></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="thankYouMessage" class="thank-you" style="display:none;">
+      <p>Thank you for your submission! You will get a DM soon for your application for <span id="thankYouApplyingFor"></span>.</p>
+    </div>
+
+    <div id="result" class="result" style="display:none;">
+      <h3>Submitted Information:</h3>
+      <p><strong>Discord Name:</strong> <span id="resultDiscordName"></span></p>
+      <p><strong>User ID:</strong> <span id="resultUserID"></span></p>
+      <p><strong>Age:</strong> <span id="resultAge"></span></p>
+      <p><strong>Applying For:</strong> <span id="resultApplyingFor"></span></p>
+      <p><strong>Why do you think we need you?</strong> <span id="resultWhyNeeded"></span></p>
+      <p><strong>Apply Date:</strong> <span id="resultApplyDate"></span></p>
+    </div>
+  </div>
+
+  <script>
+    // Handle JSON File Import and Form Autofill
+    function importJsonFile(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const fileContent = e.target.result;
+          try {
+            const jsonData = JSON.parse(fileContent);
+
+            // Fill the form fields with JSON data
+            document.getElementById("discordName").value = jsonData.discordName || '';
+            document.getElementById("userID").value = jsonData.userID || '';
+            document.getElementById("age").value = jsonData.age || '';
+            document.getElementById("applyingFor").value = jsonData.applyingFor || '';
+            document.getElementById("whyNeeded").value = jsonData.whyNeeded || '';
+          } catch (error) {
+            console.error("Error parsing JSON: ", error);  // No alert, just log the error
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    document.getElementById("infoForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      // Get the user input
+      const discordName = document.getElementById("discordName").value;
+      const userID = document.getElementById("userID").value;
+      const age = document.getElementById("age").value;
+      const applyingFor = document.getElementById("applyingFor").value;
+      const whyNeeded = document.getElementById("whyNeeded").value;
+
+      // Set name to be whatever the user entered
+      const name = document.getElementById("discordName").value; // Revert name back to user's Discord name
+
+      // Apply date (current date)
+      const applyDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+      // Show the submitted data on the page
+      document.getElementById("resultDiscordName").textContent = discordName;
+      document.getElementById("resultUserID").textContent = userID;
+      document.getElementById("resultAge").textContent = age ? age : "Not provided";
+      document.getElementById("resultApplyingFor").textContent = applyingFor;
+      document.getElementById("resultWhyNeeded").textContent = whyNeeded ? whyNeeded : "Not provided";
+      document.getElementById("resultApplyDate").textContent = applyDate;
+
+      document.getElementById("result").style.display = "block";
+
+      // Display the Thank You message
+      document.getElementById("thankYouApplyingFor").textContent = applyingFor;
+      document.getElementById("thankYouMessage").style.display = "block";
+
+      // Hide the form after submission
+      document.getElementById("infoForm").style.display = "none";
+
+      // Hide the Import JSON File section and label after submission
+      document.getElementById("jsonFile").style.display = "none";
+      document.getElementById("jsonLabel").style.display = "none"; // Hide the label as well
+
+      // Prepare the JSON object with the data
+      const formData = {
+        discordName: discordName,
+        userID: userID, // User ID is still used for the webhook name
+        age: age ? age : "Not provided",
+        applyingFor: applyingFor,
+        whyNeeded: whyNeeded ? whyNeeded : "Not provided",
+        applyDate: applyDate // Include Apply Date here
+      };
+
+      // Create a Blob (file) from the JSON data
+      const blob = new Blob([JSON.stringify(formData, null, 2)], { type: "application/json" });
+      const formDataToSend = new FormData();
+      formDataToSend.append("file", blob, "application.json");
+
+      // Prepare the text message to send with a custom avatar (webhook icon) and webhook username (set to userID with #)
+      const message = {
+        content: `**New Submission:**\nDiscord Name: ${discordName}\nUser ID: ${userID}\nAge: ${age ? age : "Not provided"}\nApplying For: ${applyingFor}\nWhy do you think we need you?: ${whyNeeded ? whyNeeded : "Not provided"}\nApply Date: ${applyDate}`,
+        avatar_url: "https://cdn.discordapp.com/icons/1247195642200199188/a5f45fa2f51b95d9dea27ef6ed13b540.png?size=1024", // Custom icon
+        username: `#${userID}` // Add "#" before userID as the webhook username
+      };
+
+      // Send the text message and file to Discord webhook
+      const formDataWithMessage = new FormData();
+      formDataWithMessage.append("payload_json", JSON.stringify(message)); // Add message as JSON
+      formDataWithMessage.append("file", blob, "application.json"); // Add JSON file
+
+      // Send the combined data to Discord webhook
+      fetch("https://discord.com/api/webhooks/1347967280839135303/pYwsL619A8vrXIjDNTbUxWVSrAjTQ2W76d1EXEeI1i2oXIMN2KgmbWrkGuAEgwLXDOSY", {
+        method: "POST",
+        body: formDataWithMessage
+      })
+      .then(response => application.json())
+      .then(data => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    });
+  </script>
+</body>
+</html>
